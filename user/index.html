@@ -1,0 +1,55 @@
+#!/usr/local/bin/php
+<?php
+/**
+ * Node.js App Manager - User Level Entry Point
+ * This script renders the SPA shell inside DirectAdmin's skin template.
+ * 
+ * Output is inserted into the |OUTPUT| token of the DirectAdmin skin page.
+ */
+
+$username = getenv('USERNAME') ?: 'user';
+$plugin_id = 'node_app_manager';
+?>
+<div id="node-app-manager">
+    <link rel="stylesheet" href="/CMD_PLUGINS/<?=$plugin_id?>/images/css/app.css">
+
+    <!-- Header -->
+    <div class="nam-header">
+        <div class="nam-header-left">
+            <div class="nam-logo">N</div>
+            <div>
+                <div class="nam-title">Node.js App Manager</div>
+                <div class="nam-subtitle">Manage your Node.js applications</div>
+            </div>
+        </div>
+        <div class="nam-header-right">
+            <span class="nam-badge nam-badge-info">👤 <?=htmlspecialchars($username)?></span>
+            <span class="nam-badge nam-badge-node">v1.0.0</span>
+            <button class="nam-btn nam-btn-secondary nam-btn-sm" onclick="NodeAppManager.navigate('dashboard')" title="Refresh">
+                ↻ Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="nam-container" id="nam-content">
+        <!-- Content will be rendered by JavaScript SPA -->
+        <div class="nam-view-enter">
+            <div class="nam-stats-grid">
+                <div class="nam-skeleton" style="height:80px;border-radius:14px"></div>
+                <div class="nam-skeleton" style="height:80px;border-radius:14px"></div>
+                <div class="nam-skeleton" style="height:80px;border-radius:14px"></div>
+                <div class="nam-skeleton" style="height:80px;border-radius:14px"></div>
+            </div>
+            <div class="nam-card">
+                <div class="nam-card-body">
+                    <div class="nam-skeleton" style="height:60px;margin-bottom:12px;border-radius:14px"></div>
+                    <div class="nam-skeleton" style="height:60px;margin-bottom:12px;border-radius:14px"></div>
+                    <div class="nam-skeleton" style="height:60px;border-radius:14px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/CMD_PLUGINS/<?=$plugin_id?>/images/js/app.js"></script>
+</div>

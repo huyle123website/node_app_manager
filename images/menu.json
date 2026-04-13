@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Node.js Apps",
+    "icon": "/CMD_PLUGINS/node_app_manager/images/icon.svg",
+    "entries": [
+      {
+        "name": "App Manager",
+        "icon": "/CMD_PLUGINS/node_app_manager/images/icon.svg",
+        "href": "/CMD_PLUGINS/node_app_manager",
+        "newTab": false,
+        "updates": 0
+      }
+    ]
+  }
+]

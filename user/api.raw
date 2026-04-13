@@ -1,0 +1,378 @@
+#!/usr/local/bin/php
+<?php
+/**
+ * Node.js App Manager - API Endpoint (RAW Mode)
+ * 
+ * This script runs in DirectAdmin RAW mode, giving full control over HTTP response.
+ * All requests are handled as JSON API calls.
+ */
+
+// ============================================================================
+// HTTP Response Helpers
+// ============================================================================
+
+function send_response($data, $status = 200) {
+    $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    $length = strlen($json);
+    
+    echo "HTTP/1.1 {$status} OK\r\n";
+    echo "Content-Type: application/json; charset=utf-8\r\n";
+    echo "Content-Length: {$length}\r\n";
+    echo "Cache-Control: no-cache, no-store, must-revalidate\r\n";
+    echo "Access-Control-Allow-Origin: *\r\n";
+    echo "Access-Control-Allow-Methods: GET, POST, PUT, DELETE\r\n";
+    echo "Access-Control-Allow-Headers: Content-Type\r\n";
+    echo "\r\n";
+    echo $json;
+    exit(0);
+}
+
+function send_error($message, $status = 400) {
+    send_response(['success' => false, 'error' => $message], $status);
+}
+
+// ============================================================================
+// Environment & Auth
+// ============================================================================
+
+$username = getenv('USERNAME') ?: 'unknown';
+$user_home = "/home/{$username}";
+
+// Plugin paths
+$plugin_dir = '/usr/local/directadmin/plugins/node_app_manager';
+$scripts_dir = "{$plugin_dir}/scripts";
+$data_dir = "{$plugin_dir}/data/{$username}";
+
+// Ensure data dir exists
+if (!is_dir($data_dir)) {
+    @mkdir($data_dir, 0755, true);
+}
+
+// ============================================================================
+// Request Parsing
+// ============================================================================
+
+// Parse query string from environment
+$query_string = getenv('QUERY_STRING') ?: '';
+parse_str($query_string, $params);
+
+// Parse POST data
+$request_method = getenv('REQUEST_METHOD') ?: 'GET';
+$post_data = '';
+if ($request_method === 'POST') {
+    $post_data = file_get_contents('php://stdin');
+    if (!empty($post_data)) {
+        $post_params = json_decode($post_data, true);
+        if (is_array($post_params)) {
+            $params = array_merge($params, $post_params);
+        } else {
+            parse_str($post_data, $post_params);
+            $params = array_merge($params, $post_params);
+        }
+    }
+}
+
+$action = $params['action'] ?? '';
+$app_name = $params['app'] ?? '';
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+function run_script($script, $args = '') {
+    global $scripts_dir, $username;
+    $cmd = "bash {$scripts_dir}/{$script} '{$username}' {$args} 2>&1";
+    $output = shell_exec($cmd);
+    return trim($output);
+}
+
+function sanitize_name($name) {
+    return preg_replace('/[^a-zA-Z0-9_-]/', '', $name);
+}
+
+function sanitize_path($path) {
+    global $user_home;
+    // Ensure path is within user's home directory
+    $real = realpath($path);
+    if ($real && strpos($real, $user_home) === 0) {
+        return $real;
+    }
+    // If path doesn't exist yet but starts with user home
+    if (strpos($path, $user_home) === 0) {
+        return $path;
+    }
+    return false;
+}
+
+function parse_json_output($output) {
+    $data = json_decode($output, true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        return $data;
+    }
+    return ['success' => false, 'error' => 'Invalid response from backend', 'raw' => $output];
+}
+
+function list_directory($path, $max_depth = 2) {
+    global $user_home;
+    
+    $safe_path = sanitize_path($path);
+    if (!$safe_path || !is_dir($safe_path)) {
+        return ['success' => false, 'error' => 'Invalid directory'];
+    }
+    
+    $items = [];
+    $dir = new DirectoryIterator($safe_path);
+    foreach ($dir as $item) {
+        if ($item->isDot()) continue;
+        $name = $item->getFilename();
+        // Skip hidden files and node_modules
+        if (strpos($name, '.') === 0 && $name !== '.env') continue;
+        if ($name === 'node_modules') continue;
+        
+        $entry = [
+            'name' => $name,
+            'path' => $item->getPathname(),
+            'type' => $item->isDir() ? 'directory' : 'file',
+            'size' => $item->isFile() ? $item->getSize() : 0
+        ];
+        $items[] = $entry;
+    }
+    
+    usort($items, function($a, $b) {
+        if ($a['type'] !== $b['type']) {
+            return $a['type'] === 'directory' ? -1 : 1;
+        }
+        return strcasecmp($a['name'], $b['name']);
+    });
+    
+    return ['success' => true, 'items' => $items, 'path' => $safe_path];
+}
+
+// ============================================================================
+// API Action Handler
+// ============================================================================
+
+switch ($action) {
+    
+    // ========================================================================
+    // Application CRUD
+    // ========================================================================
+    
+    case 'list':
+        $output = run_script('node_manager.sh', 'list');
+        $apps = json_decode($output, true);
+        if (is_array($apps)) {
+            send_response(['success' => true, 'apps' => $apps]);
+        } else {
+            send_response(['success' => true, 'apps' => []]);
+        }
+        break;
+    
+    case 'create':
+        $name = sanitize_name($params['name'] ?? '');
+        $root = $params['root'] ?? '';
+        $startup = $params['startup_file'] ?? 'app.js';
+        $node_ver = $params['node_version'] ?? '';
+        $app_url = $params['app_url'] ?? '';
+        $mode = $params['mode'] ?? 'production';
+        
+        if (empty($name)) {
+            send_error('Application name is required');
+        }
+        
+        $safe_root = sanitize_path($root);
+        if (!$safe_root) {
+            send_error('Invalid application root path. Must be within your home directory.');
+        }
+        
+        $args = "create '{$name}' '{$safe_root}' '{$startup}' '{$node_ver}' '{$app_url}' '{$mode}'";
+        $output = run_script('node_manager.sh', $args);
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'delete':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        
+        // Also remove proxy
+        run_script('proxy_manager.sh', "remove '{$safe_name}'");
+        
+        $output = run_script('node_manager.sh', "delete '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // Process Control
+    // ========================================================================
+    
+    case 'start':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "start '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'stop':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "stop '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'restart':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "restart '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // NPM Operations
+    // ========================================================================
+    
+    case 'npm_install':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "npm_install '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'npm_run':
+        if (empty($app_name)) send_error('App name required');
+        $script = sanitize_name($params['script'] ?? '');
+        if (empty($script)) send_error('Script name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "npm_run '{$safe_name}' '{$script}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'npm_scripts':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "npm_scripts '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // Logs
+    // ========================================================================
+    
+    case 'logs':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $lines = intval($params['lines'] ?? 100);
+        $type = ($params['type'] ?? 'out') === 'error' ? 'error' : 'out';
+        $output = run_script('node_manager.sh', "logs '{$safe_name}' {$lines} {$type}");
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'clear_logs':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('node_manager.sh', "clear_logs '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // Environment Variables
+    // ========================================================================
+    
+    case 'save_env':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $env_vars = $params['env_vars'] ?? [];
+        $env_json = json_encode($env_vars);
+        // Escape for shell
+        $env_json_escaped = escapeshellarg($env_json);
+        $output = run_script('node_manager.sh', "save_env '{$safe_name}' {$env_json_escaped}");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // Configuration
+    // ========================================================================
+    
+    case 'update_config':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $field = sanitize_name($params['field'] ?? '');
+        $value = $params['value'] ?? '';
+        
+        $allowed_fields = ['mode', 'startup_file', 'node_version', 'app_url'];
+        if (!in_array($field, $allowed_fields)) {
+            send_error("Cannot update field: {$field}");
+        }
+        
+        $output = run_script('node_manager.sh', "update_config '{$safe_name}' '{$field}' '{$value}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // System Info
+    // ========================================================================
+    
+    case 'node_versions':
+        $output = run_script('node_manager.sh', 'list_versions');
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'domains':
+        $output = run_script('node_manager.sh', 'domains');
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'browse':
+        $path = $params['path'] ?? $user_home;
+        $result = list_directory($path);
+        send_response($result);
+        break;
+    
+    case 'detect_webserver':
+        $output = run_script('proxy_manager.sh', 'detect');
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'setup_proxy':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $domain = $params['domain'] ?? '';
+        $port = intval($params['port'] ?? 0);
+        
+        if (empty($domain) || $port <= 0) {
+            send_error('Domain and port are required');
+        }
+        
+        $output = run_script('proxy_manager.sh', "create '{$domain}' {$port} '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    case 'remove_proxy':
+        if (empty($app_name)) send_error('App name required');
+        $safe_name = sanitize_name($app_name);
+        $output = run_script('proxy_manager.sh', "remove '{$safe_name}'");
+        send_response(parse_json_output($output));
+        break;
+    
+    // ========================================================================
+    // System Status
+    // ========================================================================
+    
+    case 'system_info':
+        $info = [
+            'success' => true,
+            'username' => $username,
+            'home' => $user_home,
+            'pm2_installed' => !empty(shell_exec('which pm2 2>/dev/null')),
+            'nvm_installed' => is_dir("/home/{$username}/.nvm") || is_dir('/usr/local/nvm'),
+            'node_installed' => !empty(shell_exec('which node 2>/dev/null')),
+            'node_version' => trim(shell_exec('node --version 2>/dev/null') ?: 'N/A'),
+            'npm_version' => trim(shell_exec('npm --version 2>/dev/null') ?: 'N/A'),
+            'server_time' => date('Y-m-d H:i:s T'),
+            'plugin_version' => '1.0.0'
+        ];
+        send_response($info);
+        break;
+    
+    default:
+        send_error('Unknown action: ' . $action, 404);
+}

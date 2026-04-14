@@ -117,21 +117,21 @@ body {
    Reset & Base (scoped)
    ============================================================================ */
 
-#node-app-manager *,
-#node-app-manager *::before,
-#node-app-manager *::after {
+:where(#node-app-manager) *,
+:where(#node-app-manager) *::before,
+:where(#node-app-manager) *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-#node-app-manager a {
+:where(#node-app-manager) a {
     color: var(--color-primary-light);
     text-decoration: none;
     transition: color var(--transition-fast);
 }
 
-#node-app-manager a:hover {
+:where(#node-app-manager) a:hover {
     color: var(--color-primary);
 }
 

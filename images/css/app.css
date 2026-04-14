@@ -13,6 +13,8 @@
 /* ── Override DirectAdmin Iframe Wrapper ── */
 body {
     display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 #iframe-container {
@@ -20,7 +22,6 @@ body {
     width: 100% !important;
     max-width: 100% !important;
 }
-
 
 #node-app-manager {
     /* ── Color Palette ── */
@@ -109,29 +110,28 @@ body {
     min-width: 100%;
     display: block;
     line-height: 1.6;
+    padding: var(--space-8);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================================================
-   Reset & Base (scoped)
+   Reset & Base (scoped) — only box-sizing, preserve natural spacing
    ============================================================================ */
 
-:where(#node-app-manager) *,
-:where(#node-app-manager) *::before,
-:where(#node-app-manager) *::after {
+#node-app-manager *,
+#node-app-manager *::before,
+#node-app-manager *::after {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
-:where(#node-app-manager) a {
+#node-app-manager a {
     color: var(--color-primary-light);
     text-decoration: none;
     transition: color var(--transition-fast);
 }
 
-:where(#node-app-manager) a:hover {
+#node-app-manager a:hover {
     color: var(--color-primary);
 }
 
@@ -140,10 +140,10 @@ body {
    ============================================================================ */
 
 .nam-container {
-    max-width: 100%;
+    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
-    padding: var(--space-6);
+    padding: var(--space-8);
 }
 
 .nam-header {
@@ -152,9 +152,9 @@ body {
     justify-content: space-between;
     padding: var(--space-6) var(--space-8);
     background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
-    border-bottom: 1px solid var(--color-border);
-    margin-bottom: var(--space-6);
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-8);
+    border-radius: var(--radius-xl);
     position: relative;
     overflow: hidden;
 }
@@ -165,25 +165,25 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-primary-light), transparent);
 }
 
 .nam-header-left {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-5);
 }
 
 .nam-logo {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-light));
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
     color: white;
     box-shadow: var(--shadow-glow);
@@ -200,6 +200,7 @@ body {
     font-weight: 700;
     color: var(--color-text-primary);
     letter-spacing: -0.02em;
+    margin: 0;
 }
 
 .nam-subtitle {
@@ -208,13 +209,14 @@ body {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .nam-header-right {
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    flex-wrap: wrap;
 }
 
 /* ============================================================================
@@ -225,7 +227,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) var(--space-4);
+    padding: 10px 20px;
     border-radius: var(--radius-md);
     font-family: var(--font-sans);
     font-size: var(--font-size-sm);
@@ -236,6 +238,7 @@ body {
     white-space: nowrap;
     position: relative;
     overflow: hidden;
+    line-height: 1.4;
 }
 
 .nam-btn::after {
@@ -310,18 +313,18 @@ body {
 }
 
 .nam-btn-sm {
-    padding: var(--space-1) var(--space-3);
+    padding: 6px 14px;
     font-size: var(--font-size-xs);
 }
 
 .nam-btn-lg {
-    padding: var(--space-3) var(--space-6);
+    padding: 14px 28px;
     font-size: var(--font-size-md);
 }
 
 .nam-btn-icon {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     padding: 0;
     display: inline-flex;
     align-items: center;
@@ -330,14 +333,14 @@ body {
 }
 
 .nam-btn-icon.nam-btn-sm {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-sm);
 }
 
 .nam-btn-group {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 /* Disabled state */
@@ -368,10 +371,15 @@ body {
 .nam-card {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     backdrop-filter: blur(12px);
     transition: all var(--transition-base);
     overflow: hidden;
+    margin-bottom: var(--space-6);
+}
+
+.nam-card:last-child {
+    margin-bottom: 0;
 }
 
 .nam-card:hover {
@@ -383,7 +391,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-6);
     border-bottom: 1px solid var(--color-border);
 }
 
@@ -393,15 +401,16 @@ body {
     color: var(--color-text-primary);
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    margin: 0;
 }
 
 .nam-card-body {
-    padding: var(--space-5);
+    padding: var(--space-6) var(--space-6);
 }
 
 .nam-card-footer {
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-6);
     border-top: 1px solid var(--color-border);
     background: rgba(0, 0, 0, 0.15);
 }
@@ -412,19 +421,19 @@ body {
 
 .nam-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-8);
 }
 
 .nam-stat-card {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
     display: flex;
     align-items: flex-start;
-    gap: var(--space-4);
+    gap: var(--space-5);
     transition: all var(--transition-base);
     position: relative;
     overflow: hidden;
@@ -442,18 +451,18 @@ body {
 
 .nam-stat-card:hover {
     border-color: var(--color-border-hover);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
 }
 
 .nam-stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 24px;
     flex-shrink: 0;
     position: relative;
 }
@@ -472,6 +481,7 @@ body {
     font-weight: 800;
     color: var(--color-text-primary);
     line-height: 1.2;
+    margin: 0 0 var(--space-1) 0;
 }
 
 .nam-stat-label {
@@ -480,7 +490,7 @@ body {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: var(--space-1);
+    margin: 0;
 }
 
 /* ============================================================================
@@ -490,14 +500,15 @@ body {
 .nam-app-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
+    padding: var(--space-5);
 }
 
 .nam-app-item {
     background: var(--color-bg-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-6);
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
@@ -530,8 +541,8 @@ body {
 .nam-app-item.errored::before { background: var(--color-warning); }
 
 .nam-app-status-dot {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     flex-shrink: 0;
     position: relative;
@@ -560,7 +571,7 @@ body {
 .nam-app-info {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-2);
     min-width: 0;
 }
 
@@ -570,13 +581,15 @@ body {
     color: var(--color-text-primary);
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    margin: 0;
 }
 
 .nam-app-meta {
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-5);
     flex-wrap: wrap;
+    margin-top: var(--space-1);
 }
 
 .nam-app-meta-item {
@@ -596,7 +609,7 @@ body {
 
 .nam-app-actions {
     display: flex;
-    gap: var(--space-2);
+    gap: var(--space-3);
     align-items: center;
 }
 
@@ -608,7 +621,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
-    padding: 2px var(--space-2);
+    padding: 4px 12px;
     border-radius: var(--radius-full);
     font-size: var(--font-size-xs);
     font-weight: 600;
@@ -651,7 +664,7 @@ body {
    ============================================================================ */
 
 .nam-form-group {
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-6);
 }
 
 .nam-label {
@@ -672,7 +685,7 @@ body {
 .nam-select,
 .nam-textarea {
     width: 100%;
-    padding: var(--space-3) var(--space-4);
+    padding: 12px 16px;
     background: var(--color-bg-input);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -681,6 +694,7 @@ body {
     font-size: var(--font-size-base);
     transition: all var(--transition-base);
     outline: none;
+    line-height: 1.5;
 }
 
 .nam-input:focus,
@@ -703,26 +717,27 @@ body {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2394a3b8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 36px;
+    background-position: right 14px center;
+    padding-right: 40px;
     cursor: pointer;
 }
 
 .nam-textarea {
-    min-height: 100px;
+    min-height: 120px;
     resize: vertical;
 }
 
 .nam-form-hint {
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
-    margin-top: var(--space-1);
+    margin-top: var(--space-2);
+    line-height: 1.5;
 }
 
 .nam-form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
+    gap: var(--space-6);
 }
 
 @media (max-width: 640px) {
@@ -738,14 +753,14 @@ body {
 .nam-modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10000;
     animation: fadeIn var(--transition-fast) ease-out;
-    padding: var(--space-4);
+    padding: var(--space-8);
 }
 
 .nam-modal {
@@ -754,9 +769,9 @@ body {
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 600px;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-xl), 0 0 60px rgba(0, 0, 0, 0.5);
     animation: modalSlideIn var(--transition-base) ease-out;
 }
 
@@ -768,8 +783,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-5) var(--space-6);
+    padding: var(--space-6) var(--space-8);
     border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(135deg, rgba(104, 160, 99, 0.03) 0%, transparent 100%);
 }
 
 .nam-modal-title {
@@ -778,18 +794,19 @@ body {
     color: var(--color-text-primary);
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    margin: 0;
 }
 
 .nam-modal-body {
-    padding: var(--space-6);
+    padding: var(--space-8);
 }
 
 .nam-modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-6);
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-8);
     border-top: 1px solid var(--color-border);
     background: rgba(0, 0, 0, 0.15);
 }
@@ -811,7 +828,7 @@ body {
 .nam-terminal {
     background: #0d1117;
     border: 1px solid rgba(48, 54, 61, 0.6);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     overflow: hidden;
 }
 
@@ -819,19 +836,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-3) var(--space-5);
     background: rgba(22, 27, 34, 0.8);
     border-bottom: 1px solid rgba(48, 54, 61, 0.6);
 }
 
 .nam-terminal-dots {
     display: flex;
-    gap: 6px;
+    gap: 8px;
 }
 
 .nam-terminal-dot {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
 }
 
@@ -846,12 +863,12 @@ body {
 }
 
 .nam-terminal-body {
-    padding: var(--space-4);
+    padding: var(--space-5);
     font-family: var(--font-mono);
     font-size: var(--font-size-xs);
-    line-height: 1.7;
+    line-height: 1.8;
     color: #c9d1d9;
-    max-height: 400px;
+    max-height: 450px;
     overflow-y: auto;
     white-space: pre-wrap;
     word-break: break-all;
@@ -883,13 +900,13 @@ body {
 .nam-env-editor {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 
 .nam-env-row {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
-    gap: var(--space-2);
+    gap: var(--space-3);
     align-items: start;
     animation: slideDown var(--transition-fast) ease-out;
 }
@@ -902,7 +919,7 @@ body {
 .nam-env-row .nam-input {
     font-family: var(--font-mono);
     font-size: var(--font-size-sm);
-    padding: var(--space-2) var(--space-3);
+    padding: 10px 14px;
 }
 
 /* ============================================================================
@@ -911,15 +928,15 @@ body {
 
 .nam-tabs {
     display: flex;
-    border-bottom: 1px solid var(--color-border);
-    gap: var(--space-1);
-    margin-bottom: var(--space-5);
+    border-bottom: 2px solid var(--color-border);
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
     overflow-x: auto;
-    padding-bottom: 1px;
+    padding-bottom: 0;
 }
 
 .nam-tab {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4) var(--space-5);
     font-size: var(--font-size-sm);
     font-weight: 500;
     color: var(--color-text-muted);
@@ -927,12 +944,14 @@ body {
     border: none;
     background: none;
     border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
     transition: all var(--transition-base);
     white-space: nowrap;
     font-family: var(--font-sans);
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .nam-tab:hover {
@@ -943,6 +962,7 @@ body {
 .nam-tab.active {
     color: var(--color-primary-light);
     border-bottom-color: var(--color-primary);
+    background: rgba(104, 160, 99, 0.05);
 }
 
 /* ============================================================================
@@ -951,24 +971,24 @@ body {
 
 .nam-toast-container {
     position: fixed;
-    top: var(--space-6);
-    right: var(--space-6);
+    top: var(--space-8);
+    right: var(--space-8);
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
     z-index: 20000;
-    max-width: 400px;
+    max-width: 420px;
 }
 
 .nam-toast {
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-6);
     box-shadow: var(--shadow-lg);
     display: flex;
     align-items: flex-start;
-    gap: var(--space-3);
+    gap: var(--space-4);
     animation: toastSlideIn var(--transition-base) ease-out;
     backdrop-filter: blur(12px);
 }
@@ -977,15 +997,15 @@ body {
     animation: toastSlideOut var(--transition-fast) ease-in forwards;
 }
 
-.nam-toast.success { border-left: 3px solid var(--color-success); }
-.nam-toast.error { border-left: 3px solid var(--color-danger); }
-.nam-toast.warning { border-left: 3px solid var(--color-warning); }
-.nam-toast.info { border-left: 3px solid var(--color-info); }
+.nam-toast.success { border-left: 4px solid var(--color-success); }
+.nam-toast.error { border-left: 4px solid var(--color-danger); }
+.nam-toast.warning { border-left: 4px solid var(--color-warning); }
+.nam-toast.info { border-left: 4px solid var(--color-info); }
 
 .nam-toast-icon {
-    font-size: 18px;
+    font-size: 20px;
     flex-shrink: 0;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .nam-toast.success .nam-toast-icon { color: var(--color-success); }
@@ -1001,12 +1021,13 @@ body {
     font-size: var(--font-size-sm);
     font-weight: 600;
     color: var(--color-text-primary);
+    margin: 0 0 2px 0;
 }
 
 .nam-toast-message {
     font-size: var(--font-size-xs);
     color: var(--color-text-secondary);
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .nam-toast-close {
@@ -1014,7 +1035,7 @@ body {
     border: none;
     color: var(--color-text-muted);
     cursor: pointer;
-    padding: 2px;
+    padding: 4px;
     font-size: 16px;
     line-height: 1;
     transition: color var(--transition-fast);
@@ -1040,13 +1061,13 @@ body {
 
 .nam-empty-state {
     text-align: center;
-    padding: var(--space-12) var(--space-6);
+    padding: var(--space-12) var(--space-8);
     color: var(--color-text-muted);
 }
 
 .nam-empty-state-icon {
-    font-size: 64px;
-    margin-bottom: var(--space-4);
+    font-size: 72px;
+    margin-bottom: var(--space-6);
     opacity: 0.3;
 }
 
@@ -1054,16 +1075,15 @@ body {
     font-size: var(--font-size-xl);
     font-weight: 600;
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-2);
+    margin: 0 0 var(--space-3) 0;
 }
 
 .nam-empty-state-desc {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
     color: var(--color-text-muted);
-    margin-bottom: var(--space-6);
-    max-width: 380px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto var(--space-8) auto;
+    max-width: 420px;
+    line-height: 1.6;
 }
 
 /* ============================================================================
@@ -1088,12 +1108,12 @@ body {
 
 .nam-skeleton-text {
     height: 14px;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
 }
 
 .nam-skeleton-card {
     height: 80px;
-    margin-bottom: var(--space-3);
+    margin-bottom: var(--space-4);
     border-radius: var(--radius-lg);
 }
 
@@ -1126,13 +1146,17 @@ body {
 .nam-detail-header {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    gap: var(--space-5);
+    margin-bottom: var(--space-8);
+    padding: var(--space-6);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
 }
 
 .nam-detail-back {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1142,7 +1166,7 @@ body {
     cursor: pointer;
     color: var(--color-text-secondary);
     transition: all var(--transition-base);
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .nam-detail-back:hover {
@@ -1161,14 +1185,15 @@ body {
     color: var(--color-text-primary);
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-4);
+    margin: 0;
 }
 
 .nam-detail-subtitle {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
     font-family: var(--font-mono);
-    margin-top: var(--space-1);
+    margin-top: var(--space-2);
 }
 
 /* ============================================================================
@@ -1177,14 +1202,18 @@ body {
 
 .nam-info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-6);
 }
 
 .nam-info-item {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: var(--space-2);
+    padding: var(--space-4);
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(104, 160, 99, 0.05);
 }
 
 .nam-info-label {
@@ -1192,13 +1221,15 @@ body {
     font-weight: 600;
     color: var(--color-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
+    margin: 0;
 }
 
 .nam-info-value {
     font-size: var(--font-size-base);
     color: var(--color-text-primary);
     font-family: var(--font-mono);
+    margin: 0;
 }
 
 /* ============================================================================
@@ -1208,8 +1239,8 @@ body {
 .nam-breadcrumb {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-4);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
     font-size: var(--font-size-sm);
 }
 
@@ -1249,13 +1280,13 @@ body {
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4) var(--space-5);
     text-align: left;
     border-bottom: 1px solid var(--color-border);
 }
 
 .nam-table td {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-4) var(--space-5);
     border-bottom: 1px solid rgba(104, 160, 99, 0.06);
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
@@ -1274,14 +1305,14 @@ body {
    ============================================================================ */
 
 .nam-confirm-icon {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
-    margin: 0 auto var(--space-4);
+    font-size: 32px;
+    margin: 0 auto var(--space-6);
 }
 
 .nam-confirm-icon.danger {
@@ -1294,7 +1325,8 @@ body {
     text-align: center;
     color: var(--color-text-secondary);
     font-size: var(--font-size-base);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-6);
+    line-height: 1.6;
 }
 
 .nam-confirm-name {
@@ -1310,16 +1342,16 @@ body {
 .nam-npm-output {
     background: #0d1117;
     border: 1px solid rgba(48, 54, 61, 0.6);
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
     font-family: var(--font-mono);
     font-size: var(--font-size-xs);
     color: #c9d1d9;
-    max-height: 300px;
+    max-height: 350px;
     overflow-y: auto;
     white-space: pre-wrap;
     word-break: break-all;
-    line-height: 1.6;
+    line-height: 1.7;
 }
 
 /* ============================================================================
@@ -1327,14 +1359,18 @@ body {
    ============================================================================ */
 
 @media (max-width: 768px) {
+    #node-app-manager {
+        padding: var(--space-4);
+    }
+
     .nam-container {
-        padding: var(--space-3);
+        padding: var(--space-4);
     }
     
     .nam-header {
         flex-direction: column;
-        gap: var(--space-3);
-        padding: var(--space-4);
+        gap: var(--space-4);
+        padding: var(--space-5);
     }
     
     .nam-stats-grid {
@@ -1343,7 +1379,7 @@ body {
     
     .nam-app-item {
         grid-template-columns: auto 1fr;
-        gap: var(--space-3);
+        gap: var(--space-4);
     }
     
     .nam-app-actions {
@@ -1358,6 +1394,22 @@ body {
     
     .nam-info-grid {
         grid-template-columns: 1fr;
+    }
+
+    .nam-modal-backdrop {
+        padding: var(--space-4);
+    }
+
+    .nam-modal-header {
+        padding: var(--space-5) var(--space-5);
+    }
+
+    .nam-modal-body {
+        padding: var(--space-5);
+    }
+
+    .nam-modal-footer {
+        padding: var(--space-4) var(--space-5);
     }
 }
 

@@ -102,7 +102,9 @@
         init() {
             this.container = document.createElement('div');
             this.container.className = 'nam-toast-container';
-            document.body.appendChild(this.container);
+            
+            const appRoot = document.getElementById('node-app-manager') || document.body;
+            appRoot.appendChild(this.container);
         },
 
         show(type, title, message = '') {
@@ -740,7 +742,8 @@
                 if (e.target === backdrop) modal.close();
             });
 
-            document.body.appendChild(backdrop);
+            const appRoot = document.getElementById('node-app-manager') || document.body;
+            appRoot.appendChild(backdrop);
         },
 
         close() {

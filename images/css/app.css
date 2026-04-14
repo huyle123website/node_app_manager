@@ -93,6 +93,9 @@
     color: var(--color-text-primary);
     background: var(--color-bg-primary);
     min-height: 100vh;
+    width: 100%;
+    min-width: 100%;
+    display: block;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -125,7 +128,8 @@
    ============================================================================ */
 
 .nam-container {
-    max-width: 1200px;
+    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
     padding: var(--space-6);
 }
